@@ -7,7 +7,7 @@
       <hardware>
         <plugin>dynamixel_hardware/DynamixelHardware</plugin>
         <param name="usb_port">/dev/ttyUSB0</param>
-        <param name="baud_rate">57600</param>
+        <param name="baud_rate">1000000</param>
         <!-- <param name="use_dummy">true</param> -->
       </hardware>
       <joint name="joint1">
@@ -23,7 +23,7 @@
       <!-- <transmission name="transmissionjoint1">
           <plugin>transmission_interface/SimpleTransmission</plugin>
           <joint name="joint1" role="joint1">
-              <mechanical_reduction>193.0</mechanical_reduction>
+              <mechanical_reduction>200.0</mechanical_reduction>
               <offset>0.0</offset>
           </joint>
       </transmission>       -->
