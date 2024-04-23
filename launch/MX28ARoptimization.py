@@ -35,7 +35,7 @@ def save_trajectory_data(feedback_file_path):
     # Open a new process to execute the ROS command and capture output
     with open(feedback_file_path, 'w') as output_file:
         process = subprocess.Popen(
-            ['ros2', 'topic', 'echo', '/joint_states'], 
+            ['ros2', 'topic', 'echo', '--csv', '/joint_states'],
             stdout=output_file,
             stderr=subprocess.PIPE,
             universal_newlines=True
@@ -44,9 +44,10 @@ def save_trajectory_data(feedback_file_path):
 if __name__ == '__main__':
     launch_gazebo_simulation()
     # send_joint_trajectory_command()
-    feedback_file_path = '/home/jaku6m/Desktop/OPTYMALIZACJA/OptcsvGazeboFiles/output_file.txt'  # Path to the feedback text file
+    # feedback_file_path = '/home/jaku6m/Desktop/OPTYMALIZACJA/OptcsvGazeboFiles/output_file.txt'  # Path to the feedback text file
     output_csv_file = '/home/jaku6m/Desktop/OPTYMALIZACJA/OptcsvGazeboFiles/feedback_data.csv'  # Path to the output CSV file
     # Send the joint trajectory command and capture feedback
+    save_trajectory_data(output_csv_file)
     send_joint_trajectory_command() 
-    save_trajectory_data(feedback_file_path)
+
 
