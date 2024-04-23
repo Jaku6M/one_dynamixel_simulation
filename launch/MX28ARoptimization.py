@@ -8,7 +8,7 @@ def launch_gazebo_simulation():
     # Open a new terminal and launch Gazebo simulation
     subprocess.Popen(['gnome-terminal', '--', 'ros2', 'launch', 'one_dynamixel_simulation', 'MX28AR_gazebo.launch.py'])
 
-def send_joint_trajectory_command():
+def send_joint_trajectory_command(feedback_file_path):
     # Wait for 5 seconds before sending the joint trajectory command
     time.sleep(4)
 
@@ -29,46 +29,25 @@ def send_joint_trajectory_command():
     # Convert the trajectory dictionary to a JSON-formatted string
     trajectory_json = json.dumps(trajectory)
 
-    subprocess.Popen(['gnome-terminal', '--','ros2', 'action', 'send_goal', '/joint_trajectory_controller/follow_joint_trajectory', 'control_msgs/action/FollowJointTrajectory', '-f', trajectory_json])
+    # subprocess.Popen(['gnome-terminal', '--','ros2', 'action', 'send_goal', '/joint_trajectory_controller/follow_joint_trajectory', 'control_msgs/action/FollowJointTrajectory', '-f', trajectory_json])
+    # Open a new process to execute the ROS command and capture output
+    with open(feedback_file_path, 'w') as output_file:
+        process = subprocess.Popen(
+            ['ros2', 'action', 'send_goal', '/joint_trajectory_controller/follow_joint_trajectory', 
+             'control_msgs/action/FollowJointTrajectory', '-f', trajectory_json], 
+            stdout=output_file,
+            stderr=subprocess.PIPE,
+            universal_newlines=True
+        )
+        # Wait for the process to complete
+        process.wait()
 
-def extract_feedback_data(feedback_text):
-    # Initialize variables to store extracted data
-    time_sec = None
-    positions = None
-    velocities = None
-
-    # Split the feedback text into lines
-    lines = feedback_text.strip().split('\n')
-
-    # Parse each line to extract relevant information
-    for line in lines:
-        line = line.strip()
-        if line.startswith('sec:'):
-            time_sec = int(line.split(':')[-1].strip())
-        elif line.startswith('positions:'):
-            positions = [float(value.strip()) for value in line.split(':')[-1].split()]
-        elif line.startswith('velocities:'):
-            velocities = [float(value.strip()) for value in line.split(':')[-1].split()]
-
-    return time_sec, positions, velocities
-
-def save_feedback_data_to_csv(feedback_file_path, output_csv_file):
-    with open(feedback_file_path, 'r') as feedback_file, open(output_csv_file, 'w', newline='') as csv_file:
-        csv_writer = csv.writer(csv_file)
-        csv_writer.writerow(['Time (sec)', 'Position', 'Velocity'])
-
-        feedback_text = feedback_file.read()
-        feedback_blocks = feedback_text.strip().split('\n\nFeedback:\n    ')
-
-        for feedback_block in feedback_blocks:
-            time_sec, positions, velocities = extract_feedback_data(feedback_block)
-            if time_sec is not None and positions is not None and velocities is not None:
-                csv_writer.writerow([time_sec, positions[0], velocities[0]])
 
 if __name__ == '__main__':
     launch_gazebo_simulation()
-    send_joint_trajectory_command()
-    time.sleep(10)
+    # send_joint_trajectory_command()
     feedback_file_path = '/home/jaku6m/Desktop/OPTYMALIZACJA/OptcsvGazeboFiles/output_file.txt'  # Path to the feedback text file
     output_csv_file = '/home/jaku6m/Desktop/OPTYMALIZACJA/OptcsvGazeboFiles/feedback_data.csv'  # Path to the output CSV file
-    save_feedback_data_to_csv(feedback_file_path, output_csv_file)
+    # Send the joint trajectory command and capture feedback
+    send_joint_trajectory_command(feedback_file_path) 
+
