@@ -43,12 +43,12 @@
     <origin xyz="0.0 -0.03 0.0" rpy="0 0 0" />
     <axis xyz="0 -1 0" />
     <limit velocity="5.76" effort="2.5" lower="-${pi}" upper="${pi}" />
-    <dynamics damping="0.575" friction="0.538" />
+    <dynamics damping="1.825" friction="1.288" />
   </joint>
   <gazebo reference="joint1">
       <implicitSpringDamper>true</implicitSpringDamper>
       <springStiffness>1.0</springStiffness>
-      <springReference>0.061</springReference>
+      <springReference>1.061</springReference>
       <stopErp>0.2</stopErp>
       <stopCfm>0.2</stopCfm>
   </gazebo>
