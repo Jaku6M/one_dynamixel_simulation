@@ -6,7 +6,8 @@ import csv
 
 def launch_gazebo_simulation():
     # Open a new terminal and launch Gazebo simulation
-    subprocess.Popen(['gnome-terminal', '--', 'ros2', 'launch', 'one_dynamixel_simulation', 'MX28AR_gazebo.launch.py'])
+    # subprocess.Popen(['gnome-terminal', '--', 'ros2', 'launch', 'one_dynamixel_simulation', 'MX28AR_gazebo.launch.py'])
+    subprocess.Popen(['gnome-terminal', '--', 'bash', '-c', 'cd ~/Humanoid_workspace/ && source install/local_setup.bash && timeout 20s ros2 launch one_dynamixel_simulation MX28AR_gazebo.launch.py'])
 
 def send_joint_trajectory_command():
     # Wait for sending the joint trajectory command
@@ -40,12 +41,15 @@ def save_trajectory_data(feedback_file_path):
             stderr=subprocess.PIPE,
             universal_newlines=True
         )
+        time.sleep(20)       
+        # Terminate the subprocess after the specified duration
+        process.terminate()
 
 if __name__ == '__main__':
     launch_gazebo_simulation()
     # send_joint_trajectory_command()
     output_csv_file = '/home/jaku6m/Desktop/OPTYMALIZACJA/OptcsvGazeboFiles/feedback_data.csv'  # Path to the output CSV file
     # Send the joint trajectory command and capture feedback
-    save_trajectory_data(output_csv_file)
     send_joint_trajectory_command() 
+    save_trajectory_data(output_csv_file)
 

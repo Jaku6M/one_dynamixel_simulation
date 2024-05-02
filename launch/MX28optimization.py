@@ -4,6 +4,9 @@ import time
 import json
 import csv
 import xml.etree.ElementTree as ET
+import matlab.engine
+import threading
+import re
 
 def launch_gazebo_simulation():
     # Open a new terminal and launch Gazebo simulation
@@ -42,10 +45,16 @@ def save_trajectory_data(feedback_file_path):
             universal_newlines=True
         )
 
-def run_matlab_optimization():
+def run_matlab_optimization(eng):
     # Call MATLAB script for dynamic error analysis and optimization
-    subprocess.Popen(['gnome-terminal', '--','matlab', '-r', 'run("Optimization.m")'])
+    # subprocess.Popen(['gnome-terminal', '--','matlab', '-r', 'run("Optimization.m")'])
     # subprocess.Popen(['gnome-terminal', '--','matlab', '-nodisplay', '-nosplash', '-nodesktop', '-r', 'run("Optimization.m")'])
+
+    # Call the MATLAB function
+    eng.run('Optimization.m', nargout=0)
+    # Stop MATLAB Engine
+    # eng.quit()
+    # return eng  # Return the MATLAB engine object
 
 def change_xml_values(xml_file, damping_value, friction_value, spring_stiffness_value, spring_reference_value):
     # Parse the XML file
@@ -68,32 +77,53 @@ def change_xml_values(xml_file, damping_value, friction_value, spring_stiffness_
     tree.write(xml_file)
 
 if __name__ == '__main__':
-    # Launch Gazebo simulation
-    launch_gazebo_simulation()
+    # Start the MATLAB engine
+    eng = matlab.engine.start_matlab()
+    run_matlab_optimization(eng)
+    # Read the variable's value in real-time
+    # while True:
+    #     # Access the variable's value
+    #     variable_value = eng.workspace['SimulationRunFlag']
+    #     # Print the value (you can replace print with any desired action)
+    #     print("Variable value:", variable_value)
 
-    # Wait for simulation to start and send joint trajectory command
-    send_joint_trajectory_command()
 
-    # Define output CSV file path
-    output_csv_file = '/home/jaku6m/Desktop/OPTYMALIZACJA/OptcsvGazeboFiles/feedback_data.csv'
 
-    # Save trajectory data from simulation
-    save_trajectory_data(output_csv_file)
+    # Start the optimization script in a separate thread
+    # threading.Thread(target=run_matlab_optimization, args=(eng,)).start()
+    # while True:
+    #     if eng.eval('CallSimulation') == 1:
+    #         launch_gazebo_simulation()
+    #         send_joint_trajectory_command()
+    #         output_csv_file = '/home/jaku6m/Desktop/OPTYMALIZACJA/OptcsvGazeboFiles/feedback_data.csv'
+    #         save_trajectory_data(output_csv_file)
 
-    # Run MATLAB script for dynamic error analysis and optimization
-    run_matlab_optimization()
+    # # Launch Gazebo simulation
+    # launch_gazebo_simulation()
 
-    # Example usage of ChangeVals.py to modify XML file based on optimization results
-    xml_file_path = '/home/jaku6m/Humanoid_workspace/src/one_dynamixel_simulation/urdf/MX28AR.xacro'
-    change_xml_values(xml_file_path, damping_value=0.3, friction_value=0.3, spring_stiffness_value=1.1, spring_reference_value=0.11)
+    # # Wait for simulation to start and send joint trajectory command
+    # send_joint_trajectory_command()
 
-    #while matlab running == True 
-            # if NewParametersCamefromMatlab =1
-        #     change_xml_values(xml_file_path, damping_value=0.3, friction_value=0.3, spring_stiffness_value=1.1, spring_reference_value=0.11)
-        #     send_joint_trajectory_command()
-        #     save_trajectory_data(output_csv_file)
-        #     #NewDataArrived =1
-            # end
-    # end
+    # # Define output CSV file path
+    # output_csv_file = '/home/jaku6m/Desktop/OPTYMALIZACJA/OptcsvGazeboFiles/feedback_data.csv'
 
-    print(f"Completed the optimization process.")
+    # # Save trajectory data from simulation
+    # save_trajectory_data(output_csv_file)
+
+    # # Run MATLAB script for dynamic error analysis and optimization
+    # run_matlab_optimization()
+
+    # # Example usage of ChangeVals.py to modify XML file based on optimization results
+    # xml_file_path = '/home/jaku6m/Humanoid_workspace/src/one_dynamixel_simulation/urdf/MX28AR.xacro'
+    # change_xml_values(xml_file_path, damping_value=0.3, friction_value=0.3, spring_stiffness_value=1.1, spring_reference_value=0.11)
+
+    # #while matlab running == True 
+    #         # if NewParametersCamefromMatlab =1
+    #     #     change_xml_values(xml_file_path, damping_value=0.3, friction_value=0.3, spring_stiffness_value=1.1, spring_reference_value=0.11)
+    #     #     send_joint_trajectory_command()
+    #     #     save_trajectory_data(output_csv_file)
+    #     #     #NewDataArrived =1
+    #         # end
+    # # end
+
+    # print(f"Completed the optimization process.")
