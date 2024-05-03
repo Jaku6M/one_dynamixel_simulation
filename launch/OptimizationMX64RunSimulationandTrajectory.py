@@ -7,7 +7,7 @@ import csv
 def launch_gazebo_simulation():
     # Open a new terminal and launch Gazebo simulation
     # subprocess.Popen(['gnome-terminal', '--', 'ros2', 'launch', 'one_dynamixel_simulation', 'MX28AR_gazebo.launch.py'])
-    subprocess.Popen(['gnome-terminal', '--', 'bash', '-c', 'cd ~/Humanoid_workspace/ && source install/local_setup.bash && timeout 10s ros2 launch one_dynamixel_simulation MX28AR_gazebo.launch.py'])
+    subprocess.Popen(['gnome-terminal', '--', 'bash', '-c', 'cd ~/Humanoid_workspace/ && source install/local_setup.bash && timeout 10s ros2 launch one_dynamixel_simulation MX64AR_gazebo.launch.py'])
 
 def send_joint_trajectory_command():
     # Wait for sending the joint trajectory command
@@ -18,8 +18,8 @@ def send_joint_trajectory_command():
         "trajectory": {
             "joint_names": ['joint1'],
             "points": [
-                {"positions": [0.0], "time_from_start": {"sec": 1}},
-                {"positions": [-1.5708], "time_from_start": {"sec": 3}}
+                {"positions": [0.0], "time_from_start": {"sec": 0, "nanosec": 500000000}},
+                {"positions": [-1.5708], "time_from_start": {"sec": 1}}
             ]
         }
     }

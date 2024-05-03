@@ -1,29 +1,18 @@
 controller_manager:
   ros__parameters:
-    update_rate: 1000  # Hz
-    use_sim_time: true
-
-    joint_trajectory_controller:
-      type: joint_trajectory_controller/JointTrajectoryController
-
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
-
+    joint_trajectory_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+    update_rate: 1000
+    use_sim_time: true
 joint_trajectory_controller:
   ros__parameters:
-    joints:
-      - joint1
-
-    command_interfaces:
-      - effort
-    state_interfaces:
-      - position
-      - velocity
     action_monitor_rate: 1000.0
-    state_publish_rate: 1000.0  # Hz
-    allow_nonzero_velocity_at_trajectory_end: true
     allow_integration_in_goal_trajectories: true
-
+    allow_nonzero_velocity_at_trajectory_end: true
+    command_interfaces:
+    - effort
     gains:
       joint1:
         angle_wraparound: false
@@ -31,4 +20,10 @@ joint_trajectory_controller:
         ff_velocity_scale: 0.0
         i: 0.0
         i_clamp: 0.0
-        p: 45.7
+        p: 45.2
+    joints:
+    - joint1
+    state_interfaces:
+    - position
+    - velocity
+    state_publish_rate: 1000.0
